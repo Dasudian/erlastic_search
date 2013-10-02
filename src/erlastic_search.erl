@@ -28,7 +28,8 @@ create_index(Index, Json) ->
 
 %%--------------------------------------------------------------------
 %% @doc Set mappings for index and type.
-%% @spec set_index_mapping(Index, Type, Mappings) -> {ok, Data} | {error, Error}
+%% @spec set_index_mapping(Index::string(), Type::string(), Mappings) -> {ok, Data} | {error, Error}
+%% @end
 %%--------------------------------------------------------------------
 set_index_mapping(Index, Type, MappingsMochijson) when is_tuple(MappingsMochijson) ->
     MappingsJson = erls_utils:json_encode(MappingsMochijson),
@@ -39,7 +40,8 @@ set_index_mapping(Index, Type, MappingsJson) ->
 
 %%--------------------------------------------------------------------
 %% @doc Delete index mapping (delete index type).
-%% @spec delete_index_mapping(Index::string(), Type::string()) -> ok | {error, term()}.
+%% @spec delete_index_mapping(Index::string(), Type::string()) -> ok | {error, term()}
+%% @end
 %%--------------------------------------------------------------------
 delete_index_mapping([_|_]=Index, [_|_]=Type) ->
     ReqPath = Index ++ [$/ | Type],
@@ -55,7 +57,7 @@ delete_index_mapping([_|_]=Index, [_|_]=Type) ->
 %% Erlang terms, converts the document to a string and passes to the
 %% default server. Elastic Search provides the doc with an id.
 %%
-%% @spec index(Index, Type, Doc) -> {ok, Data} | {error, Error}v
+%% @spec index_doc(Index, Type, Doc) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
 index_doc(Index, Type, Doc) ->
@@ -75,7 +77,7 @@ index_doc(Index, Type, Json, Qs) ->
 %% Erlang terms, converts the document to a string after adding the _id field
 %% and passes to the default server.
 %%
-%% @spec index(Index, Type, Id, Doc) -> {ok, Data} | {error, Error}
+%% @spec index_doc_with_id(Index, Type, Id, Doc) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
 index_doc_with_id(Index, Type, Id, Doc) ->
@@ -94,8 +96,11 @@ to_bin(L) when is_list(L)   -> list_to_binary(L);
 to_bin(B) when is_binary(B) -> B;
 to_bin(A) when is_atom(A)   -> to_bin(atom_to_list(A)).
 
-
+%%--------------------------------------------------------------------
+%% @doc 
 %% Documents is [ {Index, Type, Id, Json}, ... ]
+%% @end
+%%--------------------------------------------------------------------
 bulk_index_docs(Params, IndexTypeIdJsonTuples) ->
     Body = lists:map(fun({Index, Type, Id, Json}) ->
          Header = erls_utils:json_encode({struct, [
@@ -138,7 +143,7 @@ search_limit(Index, Type, Query, Limit) when is_integer(Limit) ->
 %% Takes the index and type name and a query as "key:value" and sends
 %% it to the Elastic Search server specified in Params.
 %%
-%% @spec search(Params, Index, Type, Query) -> {ok, Data} | {error, Error}
+%% @spec search(Params, Index, Type, Query, Opts) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
 search(Params, Index=[H|_T], Type=[H2|_T2], Query, Opts) when not is_list(H), is_list(H2) ->
@@ -157,7 +162,7 @@ search(Params, Index, Type, Query, Opts) ->
 %% Takes the index and type name and a query mochijson struct {struct, ...} and sends
 %% it to the Elastic Search server specified in request body.
 %%
-%% @spec search(Params, Index, Type, Query) -> {ok, Data} | {error, Error}
+%% @spec search_mochijson(Index, Type, Query) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
 search_mochijson(Index, Type, QueryMochijson) ->
@@ -185,7 +190,7 @@ match_all(Index, Type, Qs) ->
 %% Takes the index and type name and a doc id and sends
 %% it to the default Elastic Search server on localhost:9100
 %%
-%% @spec index(Index, Type, Id, Doc) -> {ok, Data} | {error, Error}
+%% @spec get_doc(Index, Type, Id) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
 get_doc(Index, Type, Id) ->
@@ -217,6 +222,9 @@ flush_index(Index, IsRefresh) ->
     end,
     erls_resource:post(#erls_params{}, Index ++ "/_flush", [], Qs, [], []).
 
+%%--------------------------------------------------------------------
+%% @doc Runs refresh_all().
+%%--------------------------------------------------------------------
 flush_all() ->
     refresh_all().
 
@@ -296,13 +304,15 @@ status(Index) ->
     erls_resource:get(#erls_params{}, ReqPath, [], [], []).
 
 %% @doc request es. site root. It is used to ensure, that elasticsearch is running.
-%% @spec about() -> {ok, AboutJson} | {error, term()}.
+%% @spec about() -> {ok, AboutJson} | {error, term()}
+%% @end
 about() ->
     erls_resource:get(#erls_params{}, "/", [], [], []).
 
 
 %% @doc Put index template.
-%% @spec set_index_template(Name::string(), mochijson()) -> {ok, term()} | {error, term()}.
+%% @spec set_index_template(Name::string(), mochijson()) -> {ok, term()} | {error, term()}
+%% @end
 set_index_template(Name, Mochijson) when is_list(Name) ->
     Json = erls_utils:json_encode(Mochijson),
     ReqPath = "_template/" ++ Name,
