@@ -3,7 +3,7 @@
 
 -record(erls_params, {
           host        = "127.0.0.1" :: string(),
-          port        = 9201 :: integer(),
+          port        = 9200 :: integer(),
           ssl         = false :: boolean(),
           prefix      = "/" :: string(),
           name        = default :: term(),
