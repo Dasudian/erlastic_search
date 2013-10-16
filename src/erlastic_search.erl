@@ -159,6 +159,22 @@ search(Params, Index, Type, Query, Opts) ->
 
 %%--------------------------------------------------------------------
 %% @doc
+%% Takes the index a Json query described in Erlang terms,
+%% and retrieves the relevant suggestion from elasticsearch.
+%%
+%% Warning: 
+%% Experimental, use at your own risk
+%%
+%% @spec suggest(Index, Query) -> {ok, Data} | {error, Error}
+%% @end
+%%--------------------------------------------------------------------
+suggest(Index, Query) ->	
+    Path = filename:join([Index, "_suggest"]),
+	erls_resource:post(#erls_params{}, Path, [], [], Query, []).
+
+
+%%--------------------------------------------------------------------
+%% @doc
 %% Takes the index and type name and a query mochijson struct {struct, ...} and sends
 %% it to the Elastic Search server specified in request body.
 %%
