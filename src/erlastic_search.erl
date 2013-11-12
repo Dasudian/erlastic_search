@@ -154,7 +154,8 @@ search(Params, Index=[H|_T], Type=[H2|_T2], Query, Opts) when not is_list(H), no
     search(Params, [Index], [Type], Query, Opts);
 search(Params, Index, Type, Query, Opts) ->
     Path = filename:join([Index, Type, "_search"]),
-    erls_resource:get(Params, Path, [], [{"q", Query}|Opts], []).
+	NewQuery = erls_utils:escape_special_characters_id(Query), % will escape the - character in the value of fields given in the query
+    erls_resource:get(Params, Path, [], [{"q", NewQuery}|Opts], []).
 
 
 %%--------------------------------------------------------------------

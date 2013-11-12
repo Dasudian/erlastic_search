@@ -25,3 +25,44 @@ comma_separate(List) ->
 json_encode(Data) ->
     (mochijson2:encoder([{utf8, true}]))(Data).
 
+
+
+%% @doc
+%% Function: espace_special_characters_id/1
+%% Purpose: Used to escape the - character in the value of fields in the query
+%% Returns: The query with the character escaped
+%% @end
+
+escape_special_characters_id(Query) ->
+	NewQuery = escape_special_character(Query,false),
+	NewQuery.
+
+
+%% @doc
+%% Function: espace_special_character/2
+%% Purpose: Used to escape the - character in the value of fields in the query
+%% Returns: The query with the character escaped
+%% @end
+escape_special_character([],_)->
+	[];
+escape_special_character(Query,Bool) when is_binary(Query)->
+	escape_special_character(binary_to_list(Query),Bool);
+escape_special_character([First|Rest],true) ->
+	case First of
+		$- ->
+			[$\\|[First|escape_special_character(Rest,true)]];
+		$% ->
+			[First|escape_special_character(Rest,false)];
+		$& ->
+			[First|escape_special_character(Rest,false)];
+		_ ->
+			[First|escape_special_character(Rest,true)]
+	end;
+
+escape_special_character([First|Rest],false) ->
+	case First of
+		$: ->
+			[First|escape_special_character(Rest,true)];
+		_ ->
+			[First|escape_special_character(Rest,false)]
+	end.
