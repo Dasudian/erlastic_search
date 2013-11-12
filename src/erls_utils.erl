@@ -9,7 +9,8 @@
 -module(erls_utils).
 -export([
 	comma_separate/1,
-	json_encode/1
+	json_encode/1,
+	escape_special_characters_id/1
     ]).
 
 
