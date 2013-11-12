@@ -25,3 +25,31 @@ comma_separate(List) ->
 json_encode(Data) ->
     (mochijson2:encoder([{utf8, true}]))(Data).
 
+
+escape_special_characters_id(Query) ->
+	NewQuery = escape_special_character(Query,false),
+	NewQuery.
+
+escape_special_character([],_)->
+	[];
+escape_special_character(Query,Bool) when is_binary(Query)->
+	escape_special_character(binary_to_list(Query),Bool);
+escape_special_character([First|Rest],true) ->
+	case First of
+		$- ->
+			[$\\|[First|escape_special_character(Rest,true)]];
+		$% ->
+			[First|escape_special_character(Rest,false)];
+		$& ->
+			[First|escape_special_character(Rest,false)];
+		_ ->
+			[First|escape_special_character(Rest,true)]
+	end;
+
+escape_special_character([First|Rest],false) ->
+	case First of
+		$: ->
+			[First|escape_special_character(Rest,true)];
+		_ ->
+			[First|escape_special_character(Rest,false)]
+	end.
