@@ -360,3 +360,26 @@ count1(ReqPath) ->
 nodes() ->
     erls_resource:get(#erls_params{}, "_nodes", [], [], []).
 
+
+
+%% @doc Check whether type 'Type' exists on index 'Index'
+%% @spec does_type_exist(Index :: string(), Type :: string()) -> true | false
+%% @end
+does_type_exist(Index, Type) ->
+	Path = Index ++ "/" ++ Type,
+	case erls_resource:head(#erls_params{}, Path, [], [], []) of
+		{ok, _}	    -> true;
+		{error, _}  -> false
+    end.
+
+
+%% @doc Check whether a document with _id 'Id' exist in type 'Type' on index 'Index'
+%% @spec does_doc_exist(Index :: string(), Type :: string(), Id :: string()) -> true | false
+%% @end
+does_doc_exist(Index, Type, Id) ->
+	Path = Index ++ "/" ++ Type ++ "/" ++ Id,
+	case erls_resource:head(#erls_params{}, Path, [], [], []) of
+		{ok, _}	    -> true;
+		{error, _}  -> false
+    end.
+
