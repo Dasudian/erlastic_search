@@ -188,7 +188,7 @@ suggest(Index, Query) ->
 count(Index, Type, Query) ->	
 Path = filename:join([Index, Type, "_count"]),
 NewQuery = erls_utils:escape_special_characters_id(Query),
-erls_resource:get([], Path, [], [{"q", Query}], []).
+erls_resource:get(#erls_params{}, Path, [], [{"q", Query}], []).
 
 
 %%--------------------------------------------------------------------
