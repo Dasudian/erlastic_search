@@ -119,6 +119,30 @@ bulk_index_docs(Params, IndexTypeIdJsonTuples) ->
     erls_resource:post(Params, "/_bulk", [], [], Body, []).
 
 
+
+%%--------------------------------------------------------------------
+%% @doc 
+%% Documents is [ {Index, Type, Json}, ... ]
+%% @end
+%%--------------------------------------------------------------------
+bulk_index_docs_no_id(Params, IndexTypeIdJsonTuples) ->
+    Body = lists:map(fun({Index, Type, Json}) ->
+         Header = erls_utils:json_encode({struct, [
+                                              {<<"index">>,  {struct, [
+                                                                        {<<"_index">>, to_bin(Index)},
+                                                                        {<<"_type">>, to_bin(Type)}
+                                                                       ]}}]}),
+                             [
+                              Header,
+                              <<"\n">>,
+                              Json,
+                              <<"\n">>
+                             ]
+                     end, IndexTypeIdJsonTuples),
+    erls_resource:post(Params, "/_bulk", [], [], Body, []).
+
+
+
 search(Index, Query) ->
     search(#erls_params{}, Index, "", Query, []).
 
