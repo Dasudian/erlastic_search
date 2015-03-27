@@ -200,20 +200,18 @@ suggest(Index, Query) ->
 
 %%--------------------------------------------------------------------
 %% @doc
-%% Takes the index a Json query described in Erlang terms,
+%% Takes the index a Json paylod described in Erlang terms,
 %% and retrieves the _count from elasticsearch.
 %%
 %% Warning: 
 %% Experimental, use at your own risk
 %%
-%% @spec count(Index, Query) -> {ok, Data} | {error, Error}
+%% @spec count(Index, Json) -> {ok, Data} | {error, Error}
 %% @end
 %%--------------------------------------------------------------------
-count(Index, Type, Query) ->	
+count(Index, Type, Json) ->	
 Path = filename:join([Index, Type, "_count"]),
-NewQuery = erls_utils:escape_special_characters_id(Query),
-erls_resource:get(#erls_params{}, Path, [], [{"q", Query}], []).
-
+erls_resource:get(#erls_params{}, Path, [], [], [], Json).
 
 %%--------------------------------------------------------------------
 %% @doc
