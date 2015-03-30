@@ -211,7 +211,7 @@ suggest(Index, Query) ->
 %%--------------------------------------------------------------------
 count(Index, Type, Json) ->	
 Path = filename:join([Index, Type, "_count"]),
-erls_resource:get(#erls_params{}, Path, [], [], [], Json).
+erls_resource:get(#erls_params{}, Path, [], [], Json, []).
 
 %%--------------------------------------------------------------------
 %% @doc
